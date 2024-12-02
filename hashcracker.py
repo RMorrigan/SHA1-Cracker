@@ -1,7 +1,7 @@
 import hashlib
+import itertools
+#import numpy as np
 
-# Function to generate commonly used numeric passwords
-import numpy as np
 '''
 def generate_numeric_passwords():
     num_passwords = []
@@ -12,12 +12,14 @@ def generate_numeric_passwords():
 '''
 #This is the old one. Testing the one above for memory
 def generate_numeric_passwords():
-    num_passwords = []
+    num_passwords = ['123456']
     print("Generating Numeric Passwords...")
+    '''
     for i in range(1000001):
         ##byteVal = i.to_bytes(6, 'big')
         #num_passwords.append(str(i))
         num_passwords.append(f"{i:07d}")
+    '''
     return num_passwords
 '''
 def generate_numeric_passwords():
@@ -32,8 +34,6 @@ def generate_numeric_passwords():
                                  for o in range (9):
 '''
 
-
-
 # Function to generate word-based passwords using a dictionary file
 def generate_word_passwords(dictionary_file):
     word_passwords = []
@@ -44,10 +44,25 @@ def generate_word_passwords(dictionary_file):
             # Add the word itself
             word_passwords.append(word)
             # Add numbers after the word (e.g., word1, word2, ..., word9)
-            for i in range(1000000):
-                word_passwords.append(word + str(i))
+            for i in range(1000001):
+                #word_passwords.append(word + str(i))
+                word_passwords.append(word + f"{i:07d}")
     
     return word_passwords
+
+def generate_phrase_passwords(dictionary_file):
+    print("Generating Phrase Passwords...")
+    phrase_passwords = []
+    with open(dictionary_file, 'r') as file:
+        words = file.read().splitlines()
+    
+    #Generates all combination of phrases length 2
+    word_combos =[''.join(pair) for pair in itertools.combinations(words, 2)]
+    for combo in word_combos:
+        for num in range(1001):  # numbers from 0 to 1000
+            phrase_passwords.append(f"{combo} {num}")
+
+    return phrase_passwords
 
 # Function to read the password file and return user_id -> hashed_password mapping
 def read_password_file(password_file):
@@ -65,7 +80,8 @@ def crack_passwords(passwords_file, dictionary_file):
     
     # Step 2: Generate potential passwords
     potential_passwords = generate_numeric_passwords()
-    potential_passwords += generate_word_passwords(dictionary_file)
+    #potential_passwords += generate_word_passwords(dictionary_file)
+    potential_passwords += generate_phrase_passwords(dictionary_file)
     
     # Step 3: Try to crack each user's password by comparing hashes
     print("Cracking Passwords...")
